@@ -1,6 +1,9 @@
 import { useState } from "react";
 import "./App.css";
 import words from "./wordList.json";
+import { Keyboard } from "./Keyboard";
+import { HangmanDrawing } from "./HangmanDrawing";
+import { HangmanWord } from "./HangmanWord";
 
 function getWord() {
   return words[Math.floor(Math.random() * words.length)];
@@ -30,6 +33,10 @@ function App() {
         {isWinner && "Winner! - Refresh to try again"}
         {isLoser && "Nice Try - Refresh to try again"}
       </div>
+
+      <HangmanDrawing numberOfGuesses={incorrectLetters.length} />
+      <HangmanWord />
+      <Keyboard />
     </div>
   );
 }
