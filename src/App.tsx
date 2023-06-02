@@ -12,7 +12,9 @@ function getWord() {
 function App() {
   const [wordToGuess, setWordToGuess] = useState(getWord);
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
-  const incorrectLetters: string[] = [];
+  const incorrectLetters = guessedLetters.filter(
+    (letter) => !wordToGuess.includes(letter)
+  );
   const isLoser = incorrectLetters.length >= 6;
   const isWinner = wordToGuess
     .split("")
@@ -25,6 +27,19 @@ function App() {
     },
     [guessedLetters, isLoser, isWinner]
   );
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const key = e.key;
+      if (!key.match(/^[a-z]$/)) return;
+      e.preventDefault();
+      addGuessedLetter(key);
+    };
+    document.addEventListener("keypress", handler);
+    return () => {
+      document.removeEventListener("keypress", handler);
+    };
+  }, []);
 
   return (
     <div
