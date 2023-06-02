@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 import words from "./wordList.json";
 import { Keyboard } from "./Keyboard";
@@ -12,11 +12,19 @@ function getWord() {
 function App() {
   const [wordToGuess, setWordToGuess] = useState(getWord);
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
-  const incorrectLetters = [];
+  const incorrectLetters: string[] = [];
   const isLoser = incorrectLetters.length >= 6;
   const isWinner = wordToGuess
     .split("")
     .every((letter) => guessedLetters.includes(letter));
+
+  const addGuessedLetter = useCallback(
+    (letter: string) => {
+      if (guessedLetters.includes(letter) || isLoser || isWinner) return;
+      setGuessedLetters((currLetters) => [...currLetters, letter]);
+    },
+    [guessedLetters, isLoser, isWinner]
+  );
 
   return (
     <div
@@ -40,7 +48,14 @@ function App() {
         guessedLetters={guessedLetters}
         wordToGuess={wordToGuess}
       />
-      <Keyboard />
+      <Keyboard
+        disabled={isWinner || isLoser}
+        activeLetters={guessedLetters.filter((letter) =>
+          wordToGuess.includes(letter)
+        )}
+        inactiveLetters={incorrectLetters}
+        addGuessedLetter={addGuessedLetter}
+      />
     </div>
   );
 }
